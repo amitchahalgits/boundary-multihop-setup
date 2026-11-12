@@ -1,0 +1,351 @@
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Boundary Multi-Hop: End-to-End Deep Dive &amp; Workshop</title>
+  <style>
+    body {
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: #1f2328;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 32px 16px;
+    }
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 8px;
+      color: #1f2328;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 12px;
+    }
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 32px;
+      margin-bottom: 12px;
+      color: #1f2328;
+    }
+    h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      color: #1f2328;
+    }
+    p {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #57606a;
+      margin-bottom: 24px;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background-color: #f7f8fa;
+      border: 1px solid #e5e7eb;
+      color: #3b82d4;
+      margin-bottom: 16px;
+    }
+    pre {
+      background-color: #f7f8fa;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.45;
+      overflow-x: auto;
+      margin-top: 6px;
+      margin-bottom: 16px;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 12.5px;
+      background-color: #f7f8fa;
+      padding: 2px 4px;
+      border-radius: 3px;
+      border: 1px solid #e5e7eb;
+    }
+    pre code {
+      background: none;
+      padding: 0;
+      border: none;
+      font-size: 13px;
+    }
+    .card {
+      background-color: #f7f8fa;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #1f2328;
+    }
+    .step-box {
+      border: 1px solid #e5e7eb;
+      background-color: #ffffff;
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+    .step-header {
+      font-weight: 600;
+      font-size: 14.5px;
+      color: #1f2328;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background-color: #3b82d4;
+      color: #ffffff;
+    }
+    .scenario-box {
+      border-left: 3px solid #3b82d4;
+      background-color: #f7f8fa;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      border-radius: 0 6px 6px 0;
+    }
+    .scenario-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: #1f2328;
+      margin-bottom: 6px;
+    }
+    .error-tag {
+      font-size: 12px;
+      font-family: ui-monospace, monospace;
+      color: #cf222e;
+      background-color: #ffebe9;
+      padding: 2px 6px;
+      border-radius: 3px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    ol, ul {
+      margin-top: 0;
+      margin-bottom: 14px;
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      margin-bottom: 20px;
+      font-size: 13.5px;
+    }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #f7f8fa;
+      font-weight: 600;
+    }
+    .diagram-container {
+      background-color: #f7f8fa;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .footer {
+      margin-top: 48px;
+      padding-top: 16px;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+      font-size: 12px;
+      color: #57606a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge">Architecture &amp; Operational Guide</div>
+    <h1>Boundary Multi-Hop: End-to-End Deep Dive &amp; Workshop</h1>
+    <div class="subtitle">Comprehensive step-by-step breakdown of setup mechanics, parameter functions, and dry-run troubleshooting scenarios.</div>
+
+    <div class="card">
+      <div class="card-title">Dedicated Git Repository</div>
+      <p>All configurations, setup scripts, and deep-dive documentation are maintained at:</p>
+      <code>/Users/amitchahal/Workdir/MyWorkHook/Vault/vault-learning/boundary/DEEP_DIVE_GUIDE.md</code>
+    </div>
+
+    <h2>1. End-to-End Lifecycle Flow</h2>
+    <div class="diagram-container">
+      <svg width="100%" height="220" xmlns="http://www.w3.org/2000/svg">
+        
+        <rect x="15" y="75" width="115" height="65" rx="6" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"></rect>
+        <text x="72" y="102" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#1f2328" text-anchor="middle">macOS Client</text>
+        <text x="72" y="122" font-family="-apple-system, sans-serif" font-size="10" fill="#57606a" text-anchor="middle">boundary connect</text>
+
+        
+        <rect x="180" y="15" width="140" height="60" rx="6" fill="#ffffff" stroke="#3b82d4" stroke-width="1.5"></rect>
+        <text x="250" y="40" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#1f2328" text-anchor="middle">1. Controller (:9200)</text>
+        <text x="250" y="58" font-family="-apple-system, sans-serif" font-size="10" fill="#57606a" text-anchor="middle">RBAC &amp; Route DAG</text>
+
+        
+        <rect x="180" y="125" width="140" height="60" rx="6" fill="#ffffff" stroke="#3b82d4" stroke-width="1.5"></rect>
+        <text x="250" y="150" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#1f2328" text-anchor="middle">2. Ingress (:9202)</text>
+        <text x="250" y="168" font-family="-apple-system, sans-serif" font-size="10" fill="#3b82d4" text-anchor="middle">Edge DMZ Proxy</text>
+
+        
+        <rect x="360" y="125" width="140" height="60" rx="6" fill="#ffffff" stroke="#3b82d4" stroke-width="1.5"></rect>
+        <text x="430" y="150" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#1f2328" text-anchor="middle">3. Egress (:9204)</text>
+        <text x="430" y="168" font-family="-apple-system, sans-serif" font-size="10" fill="#3b82d4" text-anchor="middle">Private VPC Relay</text>
+
+        
+        <rect x="360" y="15" width="140" height="60" rx="6" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"></rect>
+        <text x="430" y="40" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#1f2328" text-anchor="middle">PostgreSQL (:5432)</text>
+        <text x="430" y="58" font-family="-apple-system, sans-serif" font-size="10" fill="#57606a" text-anchor="middle">Encrypted State Store</text>
+
+        
+        <rect x="540" y="125" width="140" height="60" rx="6" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"></rect>
+        <text x="610" y="150" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#1f2328" text-anchor="middle">4. SSH Target (:2222)</text>
+        <text x="610" y="168" font-family="-apple-system, sans-serif" font-size="10" fill="#57606a" text-anchor="middle">Injected Login Shell</text>
+
+        
+        <path d="M 130 90 L 180 50" stroke="#3b82d4" stroke-width="1.5" fill="none"></path>
+        <path d="M 130 120 L 180 150" stroke="#3b82d4" stroke-width="1.5" fill="none"></path>
+        <path d="M 320 45 L 360 45" stroke="#e5e7eb" stroke-width="1.5" fill="none"></path>
+        <path d="M 250 75 L 250 125" stroke="#e5e7eb" stroke-width="1.5" fill="none"></path>
+        <path d="M 320 155 L 360 155" stroke="#3b82d4" stroke-width="1.5" fill="none"></path>
+        <path d="M 500 155 L 540 155" stroke="#3b82d4" stroke-width="1.5" fill="none"></path>
+      </svg>
+    </div>
+
+    <h2>2. Step-by-Step Setup Mechanics</h2>
+
+    <div class="step-box">
+      <div class="step-header">
+        <span class="step-tag">Step 1</span> PostgreSQL Database &amp; State Storage
+      </div>
+      <p><strong>What it does:</strong> Starts PostgreSQL 15 container listening on port <code>5432</code>.</p>
+      <p><strong>Under the hood:</strong> Boundary is stateless; all scopes, targets, hosts, credentials, and telemetry are stored encrypted inside PostgreSQL relational tables.</p>
+    </div>
+
+    <div class="step-box">
+      <div class="step-header">
+        <span class="step-tag">Step 2</span> AEAD KMS Cryptographic Keys (Root, Worker-Auth, Recovery)
+      </div>
+      <p><strong>What it does:</strong> Configures 3 distinct 256-bit AES-GCM encryption keys in <code>controller.hcl</code>:</p>
+      <ul>
+        <li><code>purpose = "root"</code>: Encrypts database sensitive fields and Data Encryption Keys (DEKs) at rest.</li>
+        <li><code>purpose = "worker-auth"</code>: Shared trust anchor between Controller and Workers. Workers encrypt enrollment payloads with this key to achieve automatic Worker-Led trust.</li>
+        <li><code>purpose = "recovery"</code>: Break-glass key for emergency administrative access.</li>
+      </ul>
+    </div>
+
+    <div class="step-box">
+      <div class="step-header">
+        <span class="step-tag">Step 3</span> Database Initialization (<code>boundary database init</code>)
+      </div>
+      <p><strong>What it does:</strong> Executes schema migrations, creates the root <code>global</code> scope, generates an initial administrative user/password, and outputs credentials to <code>init.log</code>.</p>
+    </div>
+
+    <div class="step-box">
+      <div class="step-header">
+        <span class="step-tag">Step 4</span> Ingress Worker Startup (Edge / DMZ)
+      </div>
+      <p><strong>What it does:</strong> Dials Controller cluster port (<code>initial_upstreams = ["127.0.0.1:9201"]</code>), completes node enrollment, and opens client proxy port <code>9202</code> with tag <code>type=["ingress"]</code>.</p>
+    </div>
+
+    <div class="step-box">
+      <div class="step-header">
+        <span class="step-tag">Step 5</span> Egress Worker Startup &amp; Multi-Hop DAG Formation
+      </div>
+      <p><strong>What it does:</strong> Starts internal VPC worker with <code>initial_upstreams = ["127.0.0.1:9202"]</code> (pointing to Ingress Worker proxy port).</p>
+      <p><strong>Under the hood:</strong> When Egress dials Ingress, Boundary's routing engine constructs a Directed Acyclic Graph (DAG) establishing that Egress is downstream of Ingress.</p>
+    </div>
+
+    <div class="step-box">
+      <div class="step-header">
+        <span class="step-tag">Step 6</span> OpenSSH Target Container (Port Mapping <code>2222:2222</code>)
+      </div>
+      <p><strong>What it does:</strong> Runs OpenSSH container listening on internal port <code>2222</code>, mapped to host port <code>2222</code>.</p>
+    </div>
+
+    <div class="step-box">
+      <div class="step-header">
+        <span class="step-tag">Step 7</span> Scopes, Host Sets &amp; Static Credential Injection
+      </div>
+      <p><strong>What it does:</strong> Creates Org (<code>DevOps Org</code>) and Project (<code>Core Infrastructure</code>), registers Host Set pointing to <code>127.0.0.1</code>, and stores injected credential (<code>testuser:testpassword</code>) inside a Static Credential Store using secure <code>env://</code> syntax.</p>
+    </div>
+
+    <div class="step-box">
+      <div class="step-header">
+        <span class="step-tag">Step 8</span> Multi-Hop Target Creation &amp; Binding
+      </div>
+      <p><strong>What it does:</strong> Creates Layer-7 SSH target with <code>-ingress-worker-filter '"ingress" in "/tags/type"'</code> and <code>-egress-worker-filter '"egress" in "/tags/type"'</code>, then attaches destination host set and injected credentials.</p>
+    </div>
+
+    <h2>3. Execution Trace: What Happens During <code>boundary connect ssh</code></h2>
+    <ol>
+      <li><strong>Authorization:</strong> CLI requests session token from Controller (:9200). Controller verifies RBAC, loads injected credentials, and calculates worker path: <code>[worker-ingress -&gt; worker-egress]</code>.</li>
+      <li><strong>Handshake:</strong> Client dials Ingress Worker (:9202) with authorization token.</li>
+      <li><strong>Mesh Relay:</strong> Ingress Worker forwards encrypted stream across to Egress Worker (:9204).</li>
+      <li><strong>Injected Login:</strong> Egress Worker dials container (:2222), injects <code>testuser:testpassword</code> directly into the SSH handshake.</li>
+      <li><strong>Shell:</strong> Interactive PTY terminal opens with zero password prompts.</li>
+    </ol>
+
+    <h2>4. Team Dry-Run Troubleshooting Workshop (3 Layers)</h2>
+
+    <div class="scenario-box">
+      <div class="scenario-title">Scenario 1: Ingress Layer Bug (Filter Tag Mismatch)</div>
+      <div class="error-tag">Error: server.(Repository).SelectSessionWorkers: error #133</div>
+      <p><strong>Cause:</strong> Target filter <code>-ingress-worker-filter '"public-dmz" in "/tags/env"'</code> does not match worker's actual tag <code>env=["dmz"]</code>.</p>
+      <p><strong>Diagnosis:</strong> Compare <code>boundary workers read</code> tags with <code>boundary targets read</code> filter.</p>
+      <p><strong>Fix:</strong> <code>boundary targets update ssh -id $TARGET_ID -ingress-worker-filter '"dmz" in "/tags/env"'</code></p>
+    </div>
+
+    <div class="scenario-box">
+      <div class="scenario-title">Scenario 2: Egress Layer Bug (Broken Multi-Hop Mesh DAG)</div>
+      <div class="error-tag">Error: No ingress workers with valid next-hop paths could be found</div>
+      <p><strong>Cause:</strong> Egress worker in <code>worker-egress.hcl</code> points to Controller (:9201) instead of Ingress Worker (:9202), preventing DAG path calculation.</p>
+      <p><strong>Diagnosis:</strong> Both workers are active, but Controller cannot find a reachability path between them.</p>
+      <p><strong>Fix:</strong> Set <code>initial_upstreams = ["127.0.0.1:9202"]</code> in <code>worker-egress.hcl</code> and restart worker.</p>
+    </div>
+
+    <div class="scenario-box">
+      <div class="scenario-title">Scenario 3: Target Layer Bug (Container Port Mismatch)</div>
+      <div class="error-tag">Error: Connection closed by 127.0.0.1 port &lt;ephemeral&gt;</div>
+      <p><strong>Cause:</strong> Container runs with <code>-p 2222:22</code> while <code>sshd</code> listens on <code>2222</code> inside container.</p>
+      <p><strong>Diagnosis:</strong> Controller logs show route succeeded <code>[w_ingress w_egress]</code>, but destination closes socket.</p>
+      <p><strong>Fix:</strong> Re-run container with <code>-p 2222:2222</code>.</p>
+    </div>
+
+    <div class="footer">
+      Made with IBM Bob
+    </div>
+  </div>
+</body>
+</html>
