@@ -78,6 +78,10 @@ sudo apt-get update && sudo apt-get install -y boundary-enterprise
 # 4. Verify installation
 boundary version
 podman --version
+
+# 5. Clone the repo inside the Lima VM:
+$ git clone https://github.com/amitchahalgits/boundary-multihop-setup.git
+$ cd boundary-multihop-setup
 ```
 
 ---
