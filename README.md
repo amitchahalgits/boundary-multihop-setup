@@ -144,16 +144,20 @@ podman run -d --name ssh-target-box --restart always \
 ```
 
 ### 6. Authenticate Admin CLI
-```bash
+```
 export BOUNDARY_ADDR="http://127.0.0.1:9200"
 export BOUNDARY_KEYRING_TYPE="none"
-export SSH_PASS="testpassword"
-
+export ADMIN_PASSWORD=$(grep "Password:" init.log | awk '{print $2}' | tr -d '\r\n')
 AUTH_METHOD_ID=$(boundary auth-methods list -scope-id global -format=json | jq -r '.items[0].id')
+
 export BOUNDARY_TOKEN=$(boundary authenticate password \
   -auth-method-id "$AUTH_METHOD_ID" \
   -login-name admin \
+  -password env://ADMIN_PASSWORD \
   -format=json | jq -r '.item.attributes.token')
+
+echo "token length: ${#BOUNDARY_TOKEN}"
+
 ```
 
 ### 7. Provision Scopes, Host Sets & Credentials
