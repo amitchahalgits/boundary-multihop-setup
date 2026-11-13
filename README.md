@@ -66,17 +66,7 @@ Once inside the Lima VM shell, install the required system tools, Podman (if not
 
 ```bash
 # 1. Update APT and install essential utilities
-sudo apt-get update && sudo apt-get install -y \
-  curl \
-  git \ 
-  jq \
-  unzip \
-  wget \
-  gpg \
-  lsb-release \
-  postgresql-client \
-  openssh-server \
-  podman
+sudo apt-get update && sudo apt-get install -y curl git jq unzip wget gpg lsb-release postgresql-client openssh-server podman
 
 # 2. Add HashiCorp Official APT Repository
 wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
