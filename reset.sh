@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-echo "==> [1/3] Stopping Boundary processes..."
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+echo "==> [1/4] Stopping Boundary processes..."
 pkill -f "boundary server" || true
 
-echo "==> [2/3] Resetting PostgreSQL container..."
+echo "==> [2/4] Resetting PostgreSQL container..."
 podman rm -f boundary-postgres 2>/dev/null || true
 podman run -d \
   --name boundary-postgres \
@@ -16,9 +19,12 @@ podman run -d \
   docker.io/library/postgres:15-alpine
 sleep 2
 
-echo "==> [3/3] Cleaning logs and cached tokens..."
+echo "==> [3/4] Cleaning logs and cached tokens..."
 rm -f init.log controller.log worker-ingress.log worker-egress.log
 rm -rf ~/.boundary
-unset BOUNDARY_TOKEN
+
+echo "==> [4/4] Removing persisted environment file..."
+rm -f "$SCRIPT_DIR/.env"
+unset BOUNDARY_TOKEN ADMIN_PASSWORD TARGET_ID PROJECT_ID ORG_ID CATALOG_ID SET_ID HOST_ID STORE_ID CRED_ID
 
 echo "==> Environment is clean. Run ./setup.sh to spin up fresh."

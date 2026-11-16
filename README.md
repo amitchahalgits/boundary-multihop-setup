@@ -25,6 +25,31 @@ Client (macOS Host)
 
 ---
 
+## 🔐 Persistent Environment Variables (Across Shell Sessions)
+
+To prevent losing credentials, tokens, and target IDs when opening new terminal tabs or new Lima VM shell sessions (`limactl shell boundary`), this repository automatically persists all environment variables:
+
+1. **Auto-Generated `.env` File**: `setup.sh` exports and writes all runtime variables to `$(pwd)/.env` with restricted permissions (`chmod 600`).
+2. **Auto-Sourcing Hook**: `setup.sh` automatically adds a source hook to `~/.bashrc`, `~/.zshrc`, and `~/.profile`:
+   ```bash
+   [ -f "/path/to/boundary-multihop-setup/.env" ] && source "/path/to/boundary-multihop-setup/.env"
+   ```
+3. **Instant Access in Any New Session**: Opening any new shell tab or running `limactl shell boundary` automatically has all variables ready:
+   - `$BOUNDARY_ADDR`
+   - `$BOUNDARY_TOKEN`
+   - `$BOUNDARY_KEYRING_TYPE`
+   - `$TARGET_ID`
+   - `$PROJECT_ID`
+   - `$ORG_ID`
+   - `$ADMIN_PASSWORD`
+
+You can also manually reload the environment at any time:
+```bash
+source .env
+```
+
+---
+
 ## 🐧 Lima Prerequisites & Setup (macOS)
 
 Lima provides automatic file sharing, port forwarding, and containerd/Podman support for running Linux on macOS (both Apple Silicon M-series and Intel).
@@ -39,7 +64,7 @@ brew install lima
 
 | Command | Description |
 |---|---|
-| `limactl start template://docker --name=boundary` | Create and launch an Ubuntu VM with docker pre-configured |
+| `limactl start template://docker --name=boundary` | Create and launch an Ubuntu VM with docker/podman pre-configured |
 | `limactl shell boundary` | Open an interactive bash shell inside the VM |
 | `limactl list` | View status and IP of all running VMs |
 | `limactl stop boundary` | Gracefully shut down the VM |
@@ -50,19 +75,19 @@ brew install lima
 ### 3. Launch Lima VM for Boundary
 
 ```bash
-# Launch a Podman-enabled Ubuntu instance named 'boundary'
+# Launch an Ubuntu instance named 'boundary'
 limactl start --name=boundary --memory 8 template://docker
 
 # Enter the VM shell
 limactl shell boundary
 
-# Config Boundary license env variable:
+# Set your Boundary Enterprise license env variable:
 export BOUNDARY_LICENSE="..."
 ```
 
 ### 4. Install Required Packages & Boundary Enterprise (Inside Lima VM)
 
-Once inside the Lima VM shell, install the required system tools, Podman (if not already present), and HashiCorp Boundary Enterprise:
+Once inside the Lima VM shell, install the required system tools, Podman, and HashiCorp Boundary Enterprise:
 
 ```bash
 # 1. Update APT and install essential utilities
@@ -80,8 +105,8 @@ boundary version
 podman --version
 
 # 5. Clone the repo inside the Lima VM:
-$ git clone https://github.com/amitchahalgits/boundary-multihop-setup.git
-$ cd boundary-multihop-setup
+git clone https://github.com/amitchahalgits/boundary-multihop-setup.git
+cd boundary-multihop-setup
 ```
 
 ---
@@ -104,7 +129,15 @@ Inside your Lima VM shell:
 
 ```bash
 chmod +x setup.sh reset.sh
-source ./setup.sh
+./setup.sh
+```
+
+Once complete, the script provisions all components, writes `.env`, and registers auto-sourcing hooks.
+
+### Connecting in the Current or Any New Shell Session
+```bash
+# In the current shell or any newly opened terminal/Lima shell:
+boundary connect ssh -target-id "$TARGET_ID"
 ```
 
 ---
@@ -144,7 +177,7 @@ podman run -d --name ssh-target-box --restart always \
 ```
 
 ### 6. Authenticate Admin CLI
-```
+```bash
 export BOUNDARY_ADDR="http://127.0.0.1:9200"
 export BOUNDARY_KEYRING_TYPE="none"
 export ADMIN_PASSWORD=$(grep "Password:" init.log | awk '{print $2}' | tr -d '\r\n')
@@ -157,7 +190,6 @@ export BOUNDARY_TOKEN=$(boundary authenticate password \
   -format=json | jq -r '.item.attributes.token')
 
 echo "token length: ${#BOUNDARY_TOKEN}"
-
 ```
 
 ### 7. Provision Scopes, Host Sets & Credentials
@@ -207,3 +239,4 @@ boundary connect ssh -target-id "$TARGET_ID" -token env://BOUNDARY_TOKEN
 ```bash
 ./reset.sh
 ```
+This stops all Boundary services, recreates the PostgreSQL container, removes logs, and clears `.env` and cached tokens.
