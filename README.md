@@ -50,6 +50,19 @@ source .env
 
 ---
 
+## 🏴‍☠️ Team Dry-Run & Troubleshooting Workshops
+
+This repository includes hands-on troubleshooting and dry-run workshop scenarios designed for engineering and SRE teams:
+
+| Guide / Script | Description |
+|---|---|
+| **[`TREASURE_HUNT_WORKSHOP.md`](TREASURE_HUNT_WORKSHOP.md)** | **3-Stage Chained Escape Room**: All 3 issues (Unbound Alias ➔ Concurrency Cap ➔ Target Port Drift) exist simultaneously and must be solved in sequence. |
+| **[`treasure_hunt_break.sh`](treasure_hunt_break.sh)** | **One-Touch Facilitator Script**: Automatically injects all 3 chained treasure hunt issues into the environment. |
+| **[`TARGET_BREAKING_SCENARIOS.md`](TARGET_BREAKING_SCENARIOS.md)** | **Target & Alias Deep Dive**: Covers unbound aliases, scope suffix namespacing rules, and port 22 vs 2222 drift. |
+| **[`TROUBLESHOOTING_WORKSHOP.md`](TROUBLESHOOTING_WORKSHOP.md)** | **3-Layer Team Matrix**: Simulates outages across Target Credentials, Multi-Hop Worker Mesh DAGs, and Session Concurrency. |
+
+---
+
 ## 🐧 Lima Prerequisites & Setup (macOS)
 
 Lima provides automatic file sharing, port forwarding, and containerd/Podman support for running Linux on macOS (both Apple Silicon M-series and Intel).
