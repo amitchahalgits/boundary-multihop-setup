@@ -29,6 +29,19 @@ fi
 pkill -f "boundary server" 2>/dev/null || true
 sleep 1
 
+
+
+# 0b. Create and start the Podman machine
+PODMAN_MACHINE="boundary-podman-machine"
+echo "==> Ensuring Podman machine '$PODMAN_MACHINE' exists and is running..."
+if ! podman machine inspect "$PODMAN_MACHINE" >/dev/null 2>&1; then
+  podman machine init "$PODMAN_MACHINE"
+fi
+if [ "$(podman machine inspect "$PODMAN_MACHINE" --format '{{.State}}')" != "running" ]; then
+  podman machine start "$PODMAN_MACHINE"
+fi
+podman system connection default "$PODMAN_MACHINE"
+
 # 1. Start PostgreSQL DB Container
 echo "==> [1/8] Starting PostgreSQL Container..."
 podman rm -f boundary-postgres 2>/dev/null || true
