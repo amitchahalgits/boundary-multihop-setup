@@ -23,7 +23,7 @@ ROLE_NAME="${ROLE_NAME:-trainee-role}"
 # Grants for a non-admin user (workshop section 2.6).
 AUTHORIZE_SESSION_GRANT="type=target;ids=*;actions=authorize-session"
 TRAINEE_GRANTS=(
-  "type=auth-method;ids=*;actions=authorize"
+  "type=auth-method;ids=*;actions=authorize-session"
   "$AUTHORIZE_SESSION_GRANT"
   "type=auth-token;ids=*;actions=read:self"
   "type=user;ids=*;actions=list-resolvable-aliases"
