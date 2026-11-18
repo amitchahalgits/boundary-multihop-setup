@@ -6,7 +6,22 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
 echo "==> [1/5] Stopping Boundary processes (controller, ingress and egress workers)..."
-pkill -f "boundary server" 2>/dev/null || true
+# Pattern is '[b]oundary' so it can never match this script's own command line.
+SERVER_PATTERN='[b]oundary server -config'
+PLUGIN_PATTERN='[b]oundary-plugin-(aws|azure|gcp)-'
+pkill -TERM -f "$SERVER_PATTERN" 2>/dev/null || true
+# Workers wait to drain once the controller is gone and can ignore SIGTERM for a long time,
+# so give them a few seconds, then force-kill whatever is left.
+for _ in 1 2 3 4 5; do
+  pgrep -f "$SERVER_PATTERN" >/dev/null 2>&1 || break
+  sleep 1
+done
+if pgrep -f "$SERVER_PATTERN" >/dev/null 2>&1; then
+  echo "    still running after 5s, sending SIGKILL: $(pgrep -f "$SERVER_PATTERN" | tr '\n' ' ')"
+  pkill -KILL -f "$SERVER_PATTERN" 2>/dev/null || true
+fi
+# Plugin helper processes spawned by the servers (they can be orphaned by a SIGKILL).
+pkill -KILL -f "$PLUGIN_PATTERN" 2>/dev/null || true
 
 echo "==> [2/5] Removing containers (boundary-postgres, ssh-target-box)..."
 podman rm -f boundary-postgres 2>/dev/null || true
